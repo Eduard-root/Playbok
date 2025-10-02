@@ -59,16 +59,17 @@ scrape_configs:
 
   - job_name: 'windows'
     static_configs:
-      - targets: ['192.168.0.50:9182']
+      - targets: ['']
 
   - job_name: 'zabbix_linux'
     static_configs:
-      - targets: ['192.168.0.3:9100']
+      - targets: ['']
 
   - job_name: 'windows_RDS'
     static_configs:
-      - targets: ['80.82.47.129:3791']
+      - targets: ['']
 
   - job_name: 'scout_windows'
     static_configs:
-      - targets: ['80.82.47.129:9279']
+
+      - targets: ['']
