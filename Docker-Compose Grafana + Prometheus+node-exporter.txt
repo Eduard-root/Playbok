@@ -1,0 +1,74 @@
+version: '3.3'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:1.34
+    container_name: jaeger
+    ports:
+      - "16686:16686"  # Порт UI Jaeger
+      - "6831:6831/udp"  # Приемщик Thrift UDP
+      - "6832:6832/udp"  # Приемщик Compact UDP
+      - "14268:14268"  # Приемщик HTTP API
+      - "14250:14250"  # Приемщик gRPC
+
+
+volumes:
+  grafana-data:
+
+
+
+
+Так же чтобы прометеус знал где установлен ноде экспортер для собирания метрик требуется создать в этой же папке prometheus.yml    ниже как должен выглядить
+
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  - job_name: 'windows'
+    static_configs:
+      - targets: ['192.168.0.50:9182']
+
+  - job_name: 'zabbix_linux'
+    static_configs:
+      - targets: ['192.168.0.3:9100']
+
+  - job_name: 'windows_RDS'
+    static_configs:
+      - targets: ['80.82.47.129:3791']
+
+  - job_name: 'scout_windows'
+    static_configs:
+      - targets: ['80.82.47.129:9279']
